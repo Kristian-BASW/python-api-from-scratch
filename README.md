@@ -1,5 +1,7 @@
 # Python API fra bunden med FastAPI og Swagger
 
+**Dansk** | [English](README.en.md)
+
 I denne guide bygger du et API til en lille opgaveliste. Du starter med ét endpoint og udvider det, så du kan oprette, hente, opdatere og slette opgaver. Til sidst afprøver du det hele i browseren med Swagger UI.
 
 Du skal kunne skrive simple Python-funktioner og arbejde med lister og dictionaries. Brug Python 3.10 eller nyere, en editor og en terminal.
