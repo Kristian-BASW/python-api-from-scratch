@@ -1,34 +1,34 @@
-# Python API fra bunden med FastAPI og Swagger
+# Python API from scratch with FastAPI and Swagger
 
-**Dansk** | [English](README.en.md)
+[Dansk](README.da.md) | **English**
 
-I denne guide bygger du et API til en lille opgaveliste. Du starter med ét endpoint og udvider det, så du kan oprette, hente, opdatere og slette opgaver. Til sidst afprøver du det hele i browseren med Swagger UI.
+In this guide, you will build an API for a small task list. You will start with one endpoint and expand it to create, retrieve, update, and delete tasks. Finally, you will try everything in your browser using Swagger UI.
 
-Du skal kunne skrive simple Python-funktioner og arbejde med lister og dictionaries. Brug Python 3.10 eller nyere, en editor og en terminal.
+You should be comfortable writing simple Python functions and working with lists and dictionaries. Use Python 3.10 or newer, an editor, and a terminal.
 
-## 1. Forstå de vigtigste begreber
+## 1. Understand the key concepts
 
-Et **API** gør det muligt for programmer at udveksle data. En klient sender en HTTP-request til en server, og serveren returnerer et response med en statuskode og typisk data i JSON-format.
+An **API** allows programs to exchange data. A client sends an HTTP request to a server, and the server returns a response with a status code and usually data in JSON format.
 
-Et **endpoint** er kombinationen af en HTTP-metode og en sti, eksempelvis `GET /tasks`.
+An **endpoint** is the combination of an HTTP method and a path, such as `GET /tasks`.
 
-| Metode | Formål i vores API | Endpoint |
+| Method | Purpose in our API | Endpoint |
 | --- | --- | --- |
-| `GET` | Hent opgaver | `/tasks` |
-| `GET` | Hent én opgave | `/tasks/{task_id}` |
-| `POST` | Opret en opgave | `/tasks` |
-| `PUT` | Erstat en opgaves indhold | `/tasks/{task_id}` |
-| `DELETE` | Slet en opgave | `/tasks/{task_id}` |
+| `GET` | Retrieve tasks | `/tasks` |
+| `GET` | Retrieve one task | `/tasks/{task_id}` |
+| `POST` | Create a task | `/tasks` |
+| `PUT` | Replace a task's contents | `/tasks/{task_id}` |
+| `DELETE` | Delete a task | `/tasks/{task_id}` |
 
-**FastAPI** er Python-frameworket, som håndterer requests. **Uvicorn** er serveren, der kører applikationen. FastAPI genererer en **OpenAPI-beskrivelse**, som **Swagger UI** bruger til at vise interaktiv dokumentation. Swagger UI følger med FastAPI, så du behøver ikke installere det separat. Se [FastAPIs introduktion](https://fastapi.tiangolo.com/tutorial/first-steps/).
+**FastAPI** is the Python framework that handles requests. **Uvicorn** is the server that runs the application. FastAPI generates an **OpenAPI description**, which **Swagger UI** uses to display interactive documentation. Swagger UI is included with FastAPI, so you do not need to install it separately. See [FastAPI's introduction](https://fastapi.tiangolo.com/tutorial/first-steps/).
 
-## 2. Opret et virtuelt miljø
+## 2. Create a virtual environment
 
-Åbn en terminal i denne projektmappe. Hvis du følger guiden uden at have hentet projektet, skal du først oprette og åbne en tom mappe.
+Open a terminal in this project directory. If you are following the guide without downloading the project, first create and open an empty directory.
 
-Et virtuelt miljø holder projektets Python-pakker adskilt fra andre projekter.
+A virtual environment keeps the project's Python packages separate from other projects.
 
-**macOS og Linux:**
+**macOS and Linux:**
 
 ```bash
 python3 --version
@@ -44,71 +44,71 @@ py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-Når miljøet er aktiveret, viser terminalen typisk `(.venv)`. Brug herefter `python` i kommandoerne på begge platforme. I VS Code skal du også vælge miljøet via **Python: Select Interpreter** i kommandopaletten.
+Once the environment is activated, the terminal usually displays `(.venv)`. From now on, use `python` in commands on both platforms. In VS Code, also select the environment using **Python: Select Interpreter** in the command palette.
 
-Hvis PowerShell blokerer aktivering, kan du bruge miljøets Python direkte: Erstat `python` med `.\.venv\Scripts\python.exe` i de følgende kommandoer.
+If PowerShell blocks activation, you can use the environment's Python directly: replace `python` with `.\.venv\Scripts\python.exe` in the following commands.
 
-## 3. Installer FastAPI
+## 3. Install FastAPI
 
 ```bash
 python -m pip install "fastapi[standard]"
 ```
 
-Pakken inkluderer blandt andet Uvicorn. Gem de installerede versioner, så miljøet kan genskabes:
+This package includes Uvicorn, among other tools. Save the installed versions so you can recreate the environment:
 
 ```bash
 python -m pip freeze > requirements.txt
 ```
 
-På en anden computer kan du oprette et virtuelt miljø og installere pakkerne med `python -m pip install -r requirements.txt`.
+On another computer, you can create a virtual environment and install the packages using `python -m pip install -r requirements.txt`.
 
-## 4. Skriv dit første endpoint
+## 4. Write your first endpoint
 
-Opret filen `main.py` i projektmappen:
+Create a file named `main.py` in the project directory:
 
 ```python
 from fastapi import FastAPI
 
-app = FastAPI(title="Opgave-API", version="1.0.0")
+app = FastAPI(title="Task API", version="1.0.0")
 
 
 @app.get("/")
 def read_root():
-    return {"message": "Mit første API virker!"}
+    return {"message": "My first API works!"}
 ```
 
-`app` er din applikation. Dekoratoren `@app.get("/")` kobler et GET-request til stien `/` sammen med funktionen nedenunder. FastAPI omdanner funktionens dictionary til JSON.
+`app` is your application. The `@app.get("/")` decorator connects a GET request to the path `/` with the function below it. FastAPI converts the function's dictionary to JSON.
 
-Start serveren fra mappen med `main.py`:
+Start the server from the directory containing `main.py`:
 
 ```bash
 python -m uvicorn main:app --reload
 ```
 
-`main:app` betyder: Find objektet `app` i filen `main.py`. `--reload` genstarter serveren, når du gemmer ændringer, og er beregnet til lokal udvikling.
+`main:app` means: find the object `app` in the file `main.py`. `--reload` restarts the server when you save changes and is intended for local development.
 
-Lad terminalen køre, og åbn [http://127.0.0.1:8000](http://127.0.0.1:8000). Du bør se:
+Leave the terminal running and open [http://127.0.0.1:8000](http://127.0.0.1:8000). You should see:
 
 ```json
-{"message": "Mit første API virker!"}
+{"message": "My first API works!"}
 ```
 
-Stop serveren med `Ctrl+C`, når du er færdig. Kommandoer, du vil køre imens, skal køres i en anden terminal med det virtuelle miljø aktiveret.
+Stop the server with `Ctrl+C` when you are done. To run other commands while the server is running, use another terminal with the virtual environment activated.
 
-## 5. Afprøv dit API med Swagger UI
+## 5. Try your API with Swagger UI
 
-Åbn [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs), mens serveren kører.
+Open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) while the server is running.
 
-1. Fold `GET /` ud.
-2. Klik på **Try it out**.
-3. Klik på **Execute**.
-4. Find **Server response**. Statuskoden skal være `200`, og **Response body** skal indeholde beskeden fra før.
+1. Expand `GET /`.
+2. Click **Try it out**.
+3. Click **Execute**.
+4. Find **Server response**. The status code should be `200`, and **Response body** should contain the message from before.
 
-Swagger UI sender rigtige requests til din server. Under **Schemas** vises datamodeller, når vi tilføjer dem i næste trin. Den underliggende OpenAPI-beskrivelse findes på [/openapi.json](http://127.0.0.1:8000/openapi.json).
+Swagger UI sends real requests to your server. **Schemas** will display data models once we add them in the next step. The underlying OpenAPI description is available at [/openapi.json](http://127.0.0.1:8000/openapi.json).
 
-## 6. Udvid til et API med opgaver
+## 6. Expand the API to manage tasks
 
-Erstat **hele indholdet** af `main.py` med koden nedenfor. Læs først modellerne, derefter lageret og til sidst endpoints fra toppen og ned.
+Replace the **entire contents** of `main.py` with the code below. Read the models first, then the storage, and finally the endpoints from top to bottom.
 
 ```python
 from itertools import count
@@ -116,7 +116,7 @@ from itertools import count
 from fastapi import FastAPI, HTTPException, Response, status
 from pydantic import BaseModel, Field
 
-app = FastAPI(title="Opgave-API", version="1.0.0")
+app = FastAPI(title="Task API", version="1.0.0")
 
 
 class TaskInput(BaseModel):
@@ -128,14 +128,14 @@ class Task(TaskInput):
     id: int
 
 
-# Midlertidigt lager i hukommelsen.
+# Temporary storage in memory.
 tasks: dict[int, Task] = {}
 task_ids = count(1)
 
 
 @app.get("/")
 def read_root():
-    return {"message": "Mit første API virker!"}
+    return {"message": "My first API works!"}
 
 
 @app.get("/tasks", response_model=list[Task])
@@ -148,7 +148,7 @@ def list_tasks(completed: bool | None = None):
 @app.get("/tasks/{task_id}", response_model=Task)
 def get_task(task_id: int):
     if task_id not in tasks:
-        raise HTTPException(status_code=404, detail="Opgaven findes ikke")
+        raise HTTPException(status_code=404, detail="Task not found")
     return tasks[task_id]
 
 
@@ -162,7 +162,7 @@ def create_task(task: TaskInput):
 @app.put("/tasks/{task_id}", response_model=Task)
 def update_task(task_id: int, task: TaskInput):
     if task_id not in tasks:
-        raise HTTPException(status_code=404, detail="Opgaven findes ikke")
+        raise HTTPException(status_code=404, detail="Task not found")
     updated_task = Task(id=task_id, **task.model_dump())
     tasks[task_id] = updated_task
     return updated_task
@@ -171,93 +171,93 @@ def update_task(task_id: int, task: TaskInput):
 @app.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_task(task_id: int):
     if task_id not in tasks:
-        raise HTTPException(status_code=404, detail="Opgaven findes ikke")
+        raise HTTPException(status_code=404, detail="Task not found")
     del tasks[task_id]
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 ```
 
-Gem filen, og opdater Swagger-siden. Hvis serveren er stoppet, starter du den igen med samme kommando som før.
+Save the file and refresh the Swagger page. If the server has stopped, start it again using the same command as before.
 
-Data ligger kun i hukommelsen i én serverproces. Alle opgaver forsvinder ved genstart, også når `--reload` genstarter serveren efter en kodeændring. Det gør eksemplet enkelt at undersøge; vedvarende lagring kræver eksempelvis en database.
+Data is stored only in memory in a single server process. All tasks disappear when the server restarts, including when `--reload` restarts it after a code change. This keeps the example simple to explore; persistent storage requires something like a database.
 
-### Sådan hænger koden sammen
+### How the code fits together
 
-`TaskInput` beskriver request-data: en titel på 1–100 tegn og feltet `completed`, som som standard er `False`. `Task` arver disse felter og tilføjer et id, som serveren vælger. `model_dump()` laver modellen om til en dictionary, og `**` sender dictionaryens felter videre som navngivne argumenter. FastAPI bruger Pydantic-modeller til at læse og validere JSON-data. Se [request body og modeller](https://fastapi.tiangolo.com/tutorial/body/).
+`TaskInput` describes the request data: a title of 1–100 characters and a `completed` field that defaults to `False`. `Task` inherits these fields and adds an id chosen by the server. `model_dump()` converts the model to a dictionary, and `**` passes the dictionary's fields as keyword arguments. FastAPI uses Pydantic models to read and validate JSON data. See [request bodies and models](https://fastapi.tiangolo.com/tutorial/body/).
 
-`response_model` beskriver, hvilke felter API'et skal returnere, og gør svarformatet synligt i Swagger. Se [response-modeller](https://fastapi.tiangolo.com/tutorial/response-model/).
+`response_model` describes which fields the API should return and makes the response format visible in Swagger. See [response models](https://fastapi.tiangolo.com/tutorial/response-model/).
 
-`raise HTTPException(...)` afslutter requestet med en bestemt fejlstatus og en forklaring. Se [fejlhåndtering](https://fastapi.tiangolo.com/tutorial/handling-errors/).
+`raise HTTPException(...)` ends the request with a specific error status and an explanation. See [error handling](https://fastapi.tiangolo.com/tutorial/handling-errors/).
 
-Der er tre måder at sende input til vores API:
+There are three ways to send input to our API:
 
-| Input | Eksempel | Betydning |
+| Input | Example | Meaning |
 | --- | --- | --- |
-| Path-parameter | `/tasks/1` | `task_id` angiver en bestemt opgave |
-| Query-parameter | `/tasks?completed=true` | Filtrerer listen til færdige opgaver |
-| Request body | `{"title": "Læs om API'er", "completed": false}` | JSON-data til `POST` eller `PUT` |
+| Path parameter | `/tasks/1` | `task_id` identifies a specific task |
+| Query parameter | `/tasks?completed=true` | Filters the list to completed tasks |
+| Request body | `{"title": "Read about APIs", "completed": false}` | JSON data for `POST` or `PUT` |
 
-Vores `PUT` erstatter opgavens indhold. Hvis `completed` udelades, bliver værdien derfor `false`, også hvis opgaven tidligere var færdig.
+Our `PUT` replaces the task's contents. If `completed` is omitted, its value becomes `false`, even if the task was previously completed.
 
-## 7. Test hele forløbet i Swagger
+## 7. Test the full workflow in Swagger
 
-Brug **Try it out** og **Execute** for hvert request. Kør trinene i rækkefølge uden at ændre Python-filen undervejs.
+Use **Try it out** and **Execute** for each request. Follow the steps in order without changing the Python file along the way.
 
-1. Kald `GET /tasks`. På en frisk server får du `200` og en tom liste: `[]`. Lad query-parameteren `completed` være udeladt for at hente alle opgaver.
-2. Kald `POST /tasks` med denne request body:
+1. Call `GET /tasks`. On a fresh server, you get `200` and an empty list: `[]`. Leave the `completed` query parameter unset to retrieve all tasks.
+2. Call `POST /tasks` with this request body:
 
    ```json
    {
-     "title": "Byg mit første API",
+     "title": "Build my first API",
      "completed": false
    }
    ```
 
-   Du får `201` og opgaven med et `id`. Den første opgave efter en genstart får id `1`. Brug det returnerede id i resten af trinene.
+   You get `201` and the task with an `id`. The first task after a restart gets id `1`. Use the returned id for the remaining steps.
 
-3. Kald `GET /tasks/{task_id}` med opgavens id. Du får `200` og den oprettede opgave.
-4. Kald `PUT /tasks/{task_id}` med samme id og denne body:
+3. Call `GET /tasks/{task_id}` with the task's id. You get `200` and the task you created.
+4. Call `PUT /tasks/{task_id}` with the same id and this body:
 
    ```json
    {
-     "title": "Byg mit første API",
+     "title": "Build my first API",
      "completed": true
    }
    ```
 
-   Du får `200` og den opdaterede opgave.
+   You get `200` and the updated task.
 
-5. Kald `GET /tasks` med `completed` sat til `true`. Opgaven skal være med i listen. Prøv derefter `false`; opgaven skal nu være filtreret fra.
-6. Kald `DELETE /tasks/{task_id}` med samme id. Du får `204` uden response body.
-7. Hent den slettede opgave igen. Du får `404` med `{"detail": "Opgaven findes ikke"}`.
-8. Prøv at oprette en opgave med `{"title": ""}`. Du får `422`, fordi titlen er tom. Prøv også `GET /tasks/abc`: id'et skal være et heltal, så det giver også `422`.
+5. Call `GET /tasks` with `completed` set to `true`. The task should appear in the list. Then try `false`; the task should now be filtered out.
+6. Call `DELETE /tasks/{task_id}` with the same id. You get `204` with no response body.
+7. Retrieve the deleted task again. You get `404` with `{"detail": "Task not found"}`.
+8. Try creating a task with `{"title": ""}`. You get `422` because the title is empty. Also try `GET /tasks/abc`: the id must be an integer, so this also returns `422`.
 
-| Statuskode | Betydning i øvelsen |
+| Status code | Meaning in this exercise |
 | --- | --- |
-| `200 OK` | Requestet lykkedes |
-| `201 Created` | Opgaven blev oprettet |
-| `204 No Content` | Opgaven blev slettet; der er intet svarindhold |
-| `404 Not Found` | Opgaven findes ikke |
-| `422 Unprocessable Entity` | Input opfylder ikke datamodellen eller parametertypen |
+| `200 OK` | The request succeeded |
+| `201 Created` | The task was created |
+| `204 No Content` | The task was deleted; there is no response content |
+| `404 Not Found` | The task does not exist |
+| `422 Unprocessable Entity` | The input does not satisfy the data model or parameter type |
 
-## 8. Fejlfinding
+## 8. Troubleshooting
 
-| Problem | Løsning |
+| Problem | Solution |
 | --- | --- |
-| `No module named fastapi` eller `uvicorn` | Aktiver `.venv`, og kør installationen fra trin 3 igen. |
-| `Could not import module "main"` | Kør kommandoen fra mappen med `main.py`, og kontrollér filnavnet. |
-| Port 8000 er optaget | Stop den gamle server, eller brug `python -m uvicorn main:app --reload --port 8001` og åbn port 8001 i browseren. |
-| Browseren kan ikke forbinde | Kontrollér, at serveren stadig kører, og se efter fejl i terminalen. |
-| Swagger viser gamle endpoints | Gem filen, kontrollér genstarten i terminalen, og opdater browseren. |
-| Et request giver `422` | Læs fejlens `detail`: den angiver blandt andet feltet, som ikke kunne valideres. |
-| Mine opgaver er væk | Lageret nulstilles ved genstart. Opret opgaverne igen med `POST`. |
+| `No module named fastapi` or `uvicorn` | Activate `.venv` and run the installation from step 3 again. |
+| `Could not import module "main"` | Run the command from the directory containing `main.py` and check the filename. |
+| Port 8000 is already in use | Stop the old server, or use `python -m uvicorn main:app --reload --port 8001` and open port 8001 in your browser. |
+| The browser cannot connect | Check that the server is still running and look for errors in the terminal. |
+| Swagger shows old endpoints | Save the file, check the restart in the terminal, and refresh your browser. |
+| A request returns `422` | Read the error's `detail`: it identifies the field that failed validation, among other information. |
+| My tasks have disappeared | Storage is reset on restart. Create the tasks again using `POST`. |
 
-## 9. Arbejd videre
+## 9. Keep building
 
-Når du kan gennemføre testforløbet, kan du udvide API'et:
+Once you can complete the test workflow, you can extend the API:
 
-- Tilføj en valgfri beskrivelse til en opgave, og kontrollér den i Swagger.
-- Afvis titler, der kun indeholder mellemrum. Den nuværende længdevalidering tillader dem.
-- Gem opgaver i SQLite, så de overlever en genstart.
-- Tilføj brugere og adgangskontrol, så hver bruger kun kan se og ændre egne opgaver.
+- Add an optional description to a task and check it in Swagger.
+- Reject titles containing only spaces. The current length validation allows them.
+- Store tasks in SQLite so they survive a restart.
+- Add users and access control so each user can only view and modify their own tasks.
 
-Projektmappen vil efter guiden indeholde `main.py`, `requirements.txt`, `README.md` og `.venv/`. Det virtuelle miljø skal ikke med i Git; projektets `.gitignore` udelukker allerede `.venv`.
+After following the guide, the project directory will contain `main.py`, `requirements.txt`, the README files, and `.venv/`. Do not commit the virtual environment to Git; the project's `.gitignore` already excludes `.venv`.
