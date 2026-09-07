@@ -1,6 +1,6 @@
 # Python API from scratch with FastAPI and Swagger
 
-[Dansk](README.da.md) | **English**
+**English** | [Dansk](README.da.md)
 
 In this guide, you will build an API for a small task list. You will start with one endpoint and expand it to create, retrieve, update, and delete tasks. Finally, you will try everything in your browser using Swagger UI.
 
